@@ -33,7 +33,7 @@ export class UsersComponent implements OnInit {
         this.loading = false;
       },
       error: (err) => {
-        this.error = 'You are not allowed to view users, or the server returned an error.';
+        this.error = ' the server returned an error.';
         this.loading = false;
         console.error(err);
       }

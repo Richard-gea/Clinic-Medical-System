@@ -9,6 +9,7 @@ export class DoctorService {
 
   private encodeKey(id: string): string {
     return encodeURIComponent(id);
+    
   }
 
   list(params?: Record<string, string>): Observable<Doctor[]> {

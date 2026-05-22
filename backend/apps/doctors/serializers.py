@@ -7,7 +7,7 @@ from .models import Doctor
 class DoctorSerializer(serializers.ModelSerializer):
     id = serializers.CharField(read_only=True)
     diseases = serializers.PrimaryKeyRelatedField(
-        queryset=Disease.objects.active(), many=True, required=False, write_only=True
+        queryset=Disease.objects.active(), many=True, required=True, write_only=True
     )
     disease_details = DiseaseSerializer(source="diseases", many=True, read_only=True)
     profile_image_url = serializers.SerializerMethodField()
@@ -30,12 +30,12 @@ class DoctorSerializer(serializers.ModelSerializer):
         return doctor
 
     def update(self, instance, validated_data):
-        diseases = validated_data.pop("diseases", None)
+        validated_data.pop("diseases", None)
+
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
+
         instance.save()
-        if diseases is not None:
-            instance.diseases.set(diseases)
         return instance
 
     def get_profile_image_url(self, obj):

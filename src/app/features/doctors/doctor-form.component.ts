@@ -70,7 +70,11 @@ export class DoctorFormComponent implements OnInit {
     formData.append('full_name', value.full_name ?? '');
     formData.append('email', value.email ?? '');
     formData.append('phone', value.phone ?? '');
-    (value.diseases ?? []).forEach((id) => formData.append('diseases', String(id)));
+    if (!this.isEdit) {
+    (value.diseases ?? []).forEach((id) => {
+    formData.append('diseases', String(id));
+     });
+}
     if (this.imageFile) formData.append('profile_image', this.imageFile);
     if (this.pdfFile) formData.append('license_pdf', this.pdfFile);
 
@@ -81,9 +85,7 @@ export class DoctorFormComponent implements OnInit {
     request.subscribe({
       next: () => this.router.navigate(['/doctors']),
       error: (err: unknown) => {
-        // Surface the backend JSON to make 400s actionable.
-        // (Users were only seeing "400 Bad Request" in the console.)
-        // eslint-disable-next-line no-console
+       
         console.error('Doctor save failed', err);
         this.error = this.formatSaveError(err);
       }
@@ -91,44 +93,19 @@ export class DoctorFormComponent implements OnInit {
   }
 
   cancel(): void { this.router.navigate(['/doctors']); }
-
   private formatSaveError(err: unknown): string {
     if (!(err instanceof HttpErrorResponse)) {
       return 'Could not save doctor.';
     }
 
     if (err.status === 0) {
-      return 'Could not reach the server. Is the backend running on port 8000?';
+      return 'Could not reach the server. Is the backend running?';
     }
 
-    const data = err.error as any;
-    if (err.status === 400 && data) {
-      // DRF usually returns: { field: ["message"], non_field_errors: ["..."] }
-      if (typeof data === 'string') return data;
-
-      if (data.email) {
-        const msg =
-          Array.isArray(data.email) ? data.email.join(' ') :
-          typeof data.email === 'string' ? data.email :
-          '';
-        if (msg) {
-          this.form.controls.email.setErrors({ ...(this.form.controls.email.errors || {}), server: msg });
-          this.form.controls.email.markAsTouched();
-        }
-      }
-
-      const parts: string[] = [];
-      Object.entries(data).forEach(([key, value]) => {
-        const msg =
-          Array.isArray(value) ? value.join(' ') :
-          typeof value === 'string' ? value :
-          value ? JSON.stringify(value) : '';
-        if (msg) parts.push(`${key}: ${msg}`);
-      });
-
-      if (parts.length) return parts.join(' | ');
+    if (err.status === 400 && err.error) {
+      return JSON.stringify(err.error);
     }
 
-    return err.message || `Could not save doctor (HTTP ${err.status}).`;
+    return `Could not save doctor (HTTP ${err.status}).`;
   }
 }

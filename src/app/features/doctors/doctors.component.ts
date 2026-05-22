@@ -14,7 +14,6 @@ import { AuthService } from '../../core/services/auth.service';
 export class DoctorsComponent implements OnInit {
   doctors: Doctor[] = [];
   search = '';
-  specialty = '';
   ordering = 'full_name';
 
   constructor(private doctorService: DoctorService, public auth: AuthService, private router: Router) { }
@@ -23,16 +22,19 @@ export class DoctorsComponent implements OnInit {
 
   getKey(doctor: Doctor): string {
   
-    return (doctor as any).id || doctor.email;
+    return doctor.id ;
   }
 
   getDiseaseNames(doctor: Doctor): string {
-    const names = doctor.disease_details?.map((d) => d.name) ?? [];
-    return names.length ? names.join(', ') : '—';
+  if (!doctor.disease_details || doctor.disease_details.length === 0) {
+    return '—';
   }
 
+  return doctor.disease_details.map(disease => disease.name).join(', ');
+}
+
   load(): void {
-    this.doctorService.list({ search: this.search, specialty: this.specialty, ordering: this.ordering }).subscribe({
+    this.doctorService.list({ search: this.search,  ordering: this.ordering }).subscribe({
       next: (data) => this.doctors = data,
       error: () => this.doctors = []
     });

@@ -22,6 +22,8 @@ export class AppointmentService {
     appointment_time: string;
     notes: string;
   }): Observable<Appointment> {
+
+    
     return this.api.post<Appointment>('/appointments/', payload);
   }
 

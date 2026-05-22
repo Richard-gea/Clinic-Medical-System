@@ -3,6 +3,8 @@ from django.conf.urls.static import static
 from django.http import JsonResponse
 from django.urls import path, include
 
+
+
 def home(request):
     return JsonResponse({
         "message": "Medical API is running",
@@ -15,6 +17,7 @@ def home(request):
     })
 
 urlpatterns = [
+  
     path("", home),
     path("api/auth/", include("apps.accounts.urls")),
     path("api/doctors/", include("apps.doctors.urls")),

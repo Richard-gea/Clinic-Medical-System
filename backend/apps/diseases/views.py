@@ -1,5 +1,4 @@
 from django.shortcuts import get_object_or_404
-from django.utils import timezone
 from rest_framework import generics, permissions
 from .models import Disease
 from .serializers import DiseaseSerializer
@@ -12,7 +11,7 @@ class DiseaseListCreateView(generics.ListCreateAPIView):
     ordering_fields = ["name", "created_at"]
 
     def get_queryset(self):
-        queryset = Disease.objects.active()
+        queryset = Disease.objects.all()
         search = self.request.query_params.get("search", "").strip()
         ordering = self.request.query_params.get("ordering", "name").strip()
         if search:
@@ -27,7 +26,7 @@ class DiseaseRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [permissions.AllowAny]
 
     def get_queryset(self):
-        return Disease.objects.active()
+        return Disease.objects.all()
 
     def get_object(self):
         key = self.kwargs.get("pk")
@@ -40,4 +39,4 @@ class DiseaseRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
         return obj
 
     def perform_destroy(self, instance):
-        Disease.all_objects.filter(pk=instance.pk).update(is_deleted=True, deleted_at=timezone.now())
+        instance.delete()

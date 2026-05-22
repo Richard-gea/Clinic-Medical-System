@@ -19,8 +19,6 @@ class Doctor(models.Model):
     profile_image = models.ImageField(upload_to="doctors/images/", null=True, blank=True)
     license_pdf = models.FileField(upload_to="doctors/pdfs/", null=True, blank=True)
     diseases = models.ManyToManyField(Disease, related_name="doctors", blank=True)
-
-    # Soft delete fields live directly in this model.
     is_deleted = models.BooleanField(default=False)
     deleted_at = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)

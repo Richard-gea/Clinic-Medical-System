@@ -3,29 +3,22 @@ import { HomeComponent } from './features/home/home.component';
 import { LoginComponent } from './features/auth/login.component';
 import { RegisterComponent } from './features/auth/register.component';
 import { DoctorsComponent } from './features/doctors/doctors.component';
-import { DoctorFormComponent } from './features/doctors/doctor-form.component';
 import { DiseasesComponent } from './features/diseases/diseases.component';
-import { DiseaseFormComponent } from './features/diseases/disease-form.component';
 import { AppointmentsComponent } from './features/appointments/appointments.component';
 import { AppointmentFormComponent } from './features/appointments/appointment-form.component';
-import { UsersComponent }   from './features/users/users.component';
+import { UsersComponent } from './features/users/users.component';
+import { authGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
-  { path: '', component: HomeComponent },
+  { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
-  { path: 'doctors', component: DoctorsComponent },
-  { path: 'doctors/new', component: DoctorFormComponent },
-  { path: 'doctors/:id/edit', component: DoctorFormComponent },
-  { path: 'diseases', component: DiseasesComponent },
-  { path: 'diseases/new', component: DiseaseFormComponent },
-  { path: 'diseases/:id/edit', component: DiseaseFormComponent },
-  { path: 'appointments', component: AppointmentsComponent },
-  { path: 'appointments/new', component: AppointmentFormComponent },
-  {
-  path: 'users',
-  component: UsersComponent
-},
+  { path: 'home', component: HomeComponent, canActivate: [authGuard] },
+  { path: 'doctors', component: DoctorsComponent, canActivate: [authGuard] },
+  { path: 'diseases', component: DiseasesComponent, canActivate: [authGuard] },
+  { path: 'appointments', component: AppointmentsComponent, canActivate: [authGuard] },
+  { path: 'appointments/new', component: AppointmentFormComponent, canActivate: [authGuard] },
+  { path: 'users', component: UsersComponent, canActivate: [authGuard] },
 
-  { path: '**', redirectTo: '' }
+  { path: '**', redirectTo: '/login' }
 ];

@@ -1,5 +1,4 @@
 from rest_framework import generics, permissions
-from django.utils import timezone
 
 from .models import Appointment
 from .serializers import AppointmentSerializer
@@ -10,7 +9,7 @@ class AppointmentListCreateView(generics.ListCreateAPIView):
     permission_classes = [permissions.AllowAny]
 
     def get_queryset(self):
-        queryset = Appointment.objects.filter(is_deleted=False)
+        queryset = Appointment.objects.all()
 
         status_filter = self.request.query_params.get("status")
         if status_filter:
@@ -27,9 +26,7 @@ class AppointmentRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView
     lookup_url_kwarg = "id"
 
     def get_queryset(self):
-        return Appointment.objects.filter(is_deleted=False)
+        return Appointment.objects.all()
 
     def perform_destroy(self, instance):
-        instance.is_deleted = True
-        instance.deleted_at = timezone.now()
-        instance.save()
+        instance.delete()

@@ -9,6 +9,7 @@ import { AuthService } from '../../core/services/auth.service';
   imports: [CommonModule, ReactiveFormsModule, RouterLink],
   templateUrl: './register.html',
 })
+
 export class RegisterComponent {
   error = '';
 
